@@ -1,0 +1,28 @@
+app:
+  name: react-ui-deploy
+  replicas: 5
+  lables:
+    app: react-ui
+    env: dev
+  container:
+    image: deekshithsn/ui
+    tag: latest
+    name: react-ui
+    port: 8080
+    command: []
+    args: []
+  computerc:
+    limits:
+      cpu: 4
+      memory: 5Gi
+    requests:
+      cpu: 4
+      memory: 5Gi
+
+sevice:
+  name: ui-service
+hpa:
+  enabled: true
+  maxreplicas: 10
+  minreplicas: 4
+  cuputi: 90

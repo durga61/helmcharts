@@ -1,0 +1,64 @@
+---
+# Source: ui/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-service
+  labels:
+    app: react-ui
+    env: prod 
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: react-ui
+  type: NodePort
+---
+# Source: ui/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-ui-deploy
+  labels:
+    app: react-ui
+    env: prod 
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: react-ui
+  template:
+    metadata:
+      labels:
+        app: react-ui
+        env: prod 
+    spec:
+      containers:
+        - name: react-ui
+          image: deekshithsn/ui
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 4
+              memory: 5Gi
+            requests:
+              cpu: 4
+              memory: 5Gi
+---
+# Source: ui/templates/hpa.yaml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    app: react-ui
+    env: prod 
+spec:
+  maxReplicas: 10
+  minReplicas: 4
+  scaleTargetRef:
+    apiVersion: extensions/v1
+    kind: Deployment
+    name: react-ui-deploy
+  targetCPUUtilizationPercentage: 90
